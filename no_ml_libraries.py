@@ -304,7 +304,6 @@ if show:
 	pygame.init()
 	windowSurface = pygame.display.set_mode((800, 600), 0, 32)
 	windowSurface.fill(BLACK)
-	pygame.display.set_caption('i am the net who arranges the blocks du dududu dudu du du du du') # https://www.youtube.com/watch?v=hWTFG3J1CP8
 
 # play and kinda learn
 
