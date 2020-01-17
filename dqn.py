@@ -16,7 +16,7 @@ import numpy
 import pprint
 import itertools
 import sys
-import cPickle
+import pickle as cPickle
 # import pygame
 # from pygame.locals import *
 
@@ -51,8 +51,8 @@ def piece_generator():
 
 g = piece_generator()
 
-p = g.next()
-next_p = g.next()
+p = g.__next__()
+next_p = g.__next__()
 
 p_x = 6
 p_y = 0
@@ -66,19 +66,19 @@ board = [[0,0,10]+[0 for x in range(width)]+[10,0,0] for y in range(length)] \
 		+[[0 for x in range(width+6)]]
 
 def rotate_array(a):
-	return numpy.array(zip(*a[::-1]))
+	return numpy.array(list(zip(*a[::-1])))
 
 def add_p(x,y):
-	for i,j in itertools.product(xrange(len(p)),xrange(len(p[0]))):
+	for i,j in itertools.product(range(len(p)),range(len(p[0]))):
 		board[y+j][x+i] += p[i][j]
 
 def remove_p(x,y):
-	for i,j in itertools.product(xrange(len(p)),xrange(len(p[0]))):
+	for i,j in itertools.product(range(len(p)),range(len(p[0]))):
 		board[y+j][x+i] -= p[i][j]
 
 def collision():
-	for i in xrange(length+3):
-		for j in xrange(width+6):
+	for i in range(length+3):
+		for j in range(width+6):
 			if board[i][j] > 20:
 				return True
 	return False
@@ -117,7 +117,7 @@ def clear_filled_rows():
 		if full:
 			global r
 			r = r + 0.05 # reward
-			print "line cleared"
+			print("line cleared")
 			if show:
 				draw_board()
 				flash_green()
@@ -153,7 +153,7 @@ def move_p_down():
 		p_x = 6
 		p_y = 0
 		p = next_p
-		next_p = g.next()
+		next_p = g.__next__()
 		add_p(p_x,p_y)
 
 		# tell drop_p() to stop
@@ -227,25 +227,25 @@ def color_map(n):
 
 def draw_board():
 	global board, length, width
-	for i in xrange(length+3):
-		for j in xrange(width+6):
+	for i in range(length+3):
+		for j in range(width+6):
 			pygame.draw.rect(windowSurface, color_map(board[i][j]), (100+j*20, 50+i*20, 19, 19))
-	for i in xrange(len(p)):
-		for j in xrange(len(p[0])):
+	for i in range(len(p)):
+		for j in range(len(p[0])):
 			pygame.draw.rect(windowSurface, BLACK, (450+j*20, 100+i*20, 19, 19))
-	for i in xrange(len(next_p)):
-		for j in xrange(len(next_p[0])):
+	for i in range(len(next_p)):
+		for j in range(len(next_p[0])):
 			pygame.draw.rect(windowSurface, color_map(next_p[i][j]), (450+j*20, 100+i*20, 19, 19))
 
 def flash_red():
-	for i in xrange(length+3):
-		for j in xrange(width+6):
+	for i in range(length+3):
+		for j in range(width+6):
 			if board[i][j] != 0:
 				pygame.draw.rect(windowSurface, RED, (100+j*20, 50+i*20, 19, 19))	
 
 def flash_green():
-	for i in xrange(length+3):
-		for j in xrange(width+6):
+	for i in range(length+3):
+		for j in range(width+6):
 			if board[i][j] != 0:
 				pygame.draw.rect(windowSurface, GREEN, (100+j*20, 50+i*20, 19, 19))	
 
@@ -271,8 +271,8 @@ if len(sys.argv) > 1 and sys.argv[1] == 'load':
 
 if load:
 	filename='model.save'
-	print 'model', filename, 'selected'
-	print 'loading model..'
+	print('model', filename, 'selected')
+	print('loading model..')
 	save_file = open(filename, 'rb') 
 	W0 = cPickle.load(save_file)
 	W1 = cPickle.load(save_file)
@@ -280,8 +280,8 @@ if load:
 	W3 = cPickle.load(save_file)
 	save_file.close()
 else:
-	print 'no model selected'
-	print 'initializing new model..' # no biases, no normalization, arbitrary scaling
+	print('no model selected')
+	print('initializing new model..') # no biases, no normalization, arbitrary scaling
 	W0 = ( 2*np.random.random((200+4,200+4)) - 1 ) * 0.5
 	W1 = ( 2*np.random.random((200+4,100)) - 1 ) * 0.5
 	W2 = ( 2*np.random.random((100,50)) - 1 ) * 0.5
@@ -321,7 +321,7 @@ for j in range(10000):
 
 	if collision():
 		r = r - 0.0001 # punish
-		print 'game over'
+		print('game over')
 		if show:
 			draw_board()
 			flash_red()
@@ -329,12 +329,12 @@ for j in range(10000):
 			# pygame.time.wait(500)
 		if j>5000 and flag_4x1==False: 
 			flag_4x1=True
-			for i in range(7): g.next()
-			print '5000 moves played'
-			print 'introducing new piece'
+			for i in range(7): g.__next__()
+			print('5000 moves played')
+			print('introducing new piece')
 		clear_board()
-		p = g.next()
-		next_p = g.next()
+		p = g.__next__()
+		next_p = g.__next__()
 		p_x = 6
 		p_y = 0
 		add_p(p_x,p_y)
@@ -441,7 +441,7 @@ if len(sys.argv) > 3 and sys.argv[3] == 'save':
 	save = True
 
 if save:
-	print 'saving model..'
+	print('saving model..')
 	params = W0, W1, W2, W3
 	def save_model(filename='model.save'):
 	    save_file = open(filename, 'wb') 
